@@ -1,0 +1,25 @@
+{
+  "name": "webapp-sample",
+  "version": "1.0.0",
+  "description": "このリポジトリはサンプルWebアプリケーションです。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yyosshu/webapp-sample.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/yyosshu/webapp-sample/issues"
+  },
+  "homepage": "https://github.com/yyosshu/webapp-sample#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}

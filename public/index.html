@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>タスク管理アプリ</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header>
+        <h1>タスク管理</h1>
+        <p>シンプルなTodoアプリでタスクを管理しましょう。</p>
+      </header>
+      <section class="task-form">
+        <form id="taskForm">
+          <label for="taskInput" class="sr-only">タスクタイトル</label>
+          <input
+            id="taskInput"
+            type="text"
+            name="title"
+            placeholder="タスクを入力"
+            autocomplete="off"
+            required
+          />
+          <button type="submit">追加</button>
+        </form>
+        <p id="message" aria-live="polite"></p>
+      </section>
+      <section class="task-list">
+        <h2>タスク一覧</h2>
+        <ul id="taskItems"></ul>
+      </section>
+    </main>
+    <script src="/script.js" defer></script>
+  </body>
+</html>
