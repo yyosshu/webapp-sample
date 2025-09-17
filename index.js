@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs/promises');
 const express = require('express');
 
 const app = express();
@@ -10,29 +11,64 @@ app.use(express.json());
 // 静的ファイルを配信
 app.use(express.static(path.join(__dirname, 'public')));
 
-// メモリ上でタスクを保持
-const tasks = [];
+// タスクを保存するファイルパス
+const DATA_DIR = path.join(__dirname, 'data');
+const DATA_FILE = path.join(DATA_DIR, 'tasks.json');
+
+// タスクをファイルから読み込むユーティリティ
+const readTasks = async () => {
+  try {
+    const raw = await fs.readFile(DATA_FILE, 'utf8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      await fs.mkdir(DATA_DIR, { recursive: true });
+      await fs.writeFile(DATA_FILE, '[]', 'utf8');
+      return [];
+    }
+    throw error;
+  }
+};
+
+// タスクをファイルに書き込むユーティリティ
+const writeTasks = async (tasks) => {
+  await fs.mkdir(DATA_DIR, { recursive: true });
+  await fs.writeFile(DATA_FILE, JSON.stringify(tasks, null, 2), 'utf8');
+};
 
 // タスク一覧の取得
-app.get('/tasks', (_req, res) => {
-  res.json(tasks);
+app.get('/tasks', async (_req, res, next) => {
+  try {
+    const tasks = await readTasks();
+    res.json(tasks);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // タスクの追加（タイトルのみ）
-app.post('/tasks', (req, res) => {
-  const { title } = req.body;
+app.post('/tasks', async (req, res, next) => {
+  try {
+    const { title } = req.body;
 
-  if (typeof title !== 'string' || title.trim() === '') {
-    return res.status(400).json({ error: 'タイトルは必須です。' });
+    if (typeof title !== 'string' || title.trim() === '') {
+      return res.status(400).json({ error: 'タイトルは必須です。' });
+    }
+
+    const tasks = await readTasks();
+    const task = {
+      id: Date.now().toString(),
+      title: title.trim(),
+    };
+
+    tasks.push(task);
+    await writeTasks(tasks);
+
+    res.status(201).json(task);
+  } catch (error) {
+    next(error);
   }
-
-  const task = {
-    id: Date.now().toString(),
-    title: title.trim(),
-  };
-
-  tasks.push(task);
-  res.status(201).json(task);
 });
 
 // シンプルなエラーハンドリング
