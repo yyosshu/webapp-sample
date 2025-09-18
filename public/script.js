@@ -20,9 +20,21 @@ const renderTasks = (tasks) => {
 
   tasks.forEach((task) => {
     const item = document.createElement('li');
+    item.classList.add('task-item');
     const title = document.createElement('span');
     title.textContent = task.title;
     item.appendChild(title);
+
+    const completeButton = document.createElement('button');
+    completeButton.type = 'button';
+    completeButton.textContent = '完了';
+    completeButton.classList.add('complete-button');
+    completeButton.setAttribute('aria-label', `${task.title} を完了`);
+    completeButton.addEventListener('click', () => {
+      completeTask(task.id, task.title);
+    });
+
+    item.appendChild(completeButton);
     taskItems.appendChild(item);
   });
 };
@@ -65,6 +77,25 @@ const addTask = async (title) => {
     setMessage(`「${task.title}」を追加しました。`);
     taskInput.value = '';
     taskInput.focus();
+    await fetchTasks();
+  } catch (error) {
+    console.error(error);
+    setMessage(error.message, true);
+  }
+};
+
+const completeTask = async (id, title) => {
+  try {
+    const response = await fetch(`/tasks/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.error || 'タスクの完了に失敗しました。');
+    }
+
+    setMessage(`「${title}」を完了しました。`);
     await fetchTasks();
   } catch (error) {
     console.error(error);

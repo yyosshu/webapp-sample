@@ -75,6 +75,29 @@ app.post('/tasks', async (req, res, next) => {
   }
 });
 
+// タスクの完了（削除）
+app.delete('/tasks/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: 'タスクIDが指定されていません。' });
+    }
+
+    const tasks = await readTasks();
+    const nextTasks = tasks.filter((task) => task.id !== id);
+
+    if (nextTasks.length === tasks.length) {
+      return res.status(404).json({ error: 'タスクが見つかりません。' });
+    }
+
+    await writeTasks(nextTasks);
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+});
+
 // シンプルなエラーハンドリング
 app.use((err, _req, res, _next) => {
   console.error(err);

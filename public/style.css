@@ -103,8 +103,34 @@ header p {
   color: #1f2933;
 }
 
+.task-list li.task-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .task-list li span {
   font-weight: 600;
+  flex: 1;
+}
+
+.task-list li .complete-button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background-color: #10b981;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.task-list li .complete-button:hover {
+  background-color: #0b8f65;
+}
+
+.task-list li .complete-button:active {
+  transform: translateY(1px);
 }
 
 .sr-only {
