@@ -12,7 +12,11 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // タスクを保存するファイルパス
-const DATA_DIR = path.join(__dirname, 'data');
+// Vercel などのサーバーレス環境では /var/task 配下が読み取り専用のため、
+// 書き込み可能な /tmp へ退避し、ローカル開発では従来通りリポジトリ配下を使う。
+const DATA_DIR = process.env.DATA_DIR
+  ? path.resolve(process.env.DATA_DIR)
+  : path.join(process.env.VERCEL ? '/tmp' : __dirname, 'data');
 const DATA_FILE = path.join(DATA_DIR, 'tasks.json');
 
 // タスクをファイルから読み込むユーティリティ
